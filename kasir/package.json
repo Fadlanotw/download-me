@@ -1,0 +1,8 @@
+{
+  "name": "kasir-restoran",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Website kasir restoran - tahap 1: login dan buka shift",
+  "scripts": { "start": "node server.js", "adduser": "node scripts/adduser.js" },
+  "engines": { "node": ">=18" }
+}

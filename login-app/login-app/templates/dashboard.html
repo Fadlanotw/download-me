@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — Akar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="dash-shell">
+    <div class="dash-topbar">
+      <div class="mark">Akar</div>
+      <a class="btn-ghost" href="{{ url_for('logout') }}">Keluar</a>
+    </div>
+
+    <main class="dash-main">
+      <div class="dash-card">
+        <div class="kicker">Berhasil masuk</div>
+        <h1>Halo, {{ user['name'] }}.</h1>
+        <p>Kamu masuk sebagai <strong>{{ user['email'] }}</strong>.</p>
+        <p>Ini adalah halaman contoh setelah login berhasil — hubungkan ke fitur aplikasimu dari sini.</p>
+
+        <div class="dash-meta">
+          Akun dibuat: {{ user['created_at'][:19].replace('T', ' ') }} UTC<br>
+          Total pengguna terdaftar: {{ total_users }}
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

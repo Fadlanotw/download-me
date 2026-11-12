@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kasir Warung Nusantara</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* ===== 1. TEMA & DASAR ===== */
+:root{--paper:#EAF0EE;--panel:#fff;--ink:#14302A;--muted:#5E7A73;--line:#D3DEDA;--chili:#C8352B;--gold:#E3A72F;--ok:#1E7A55;
+font-family:'Bricolage Grotesque',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+header{background:var(--ink);color:#fff;display:flex;align-items:center;gap:20px;padding:12px 20px;flex-wrap:wrap}
+header h1{font-size:1.25rem;font-weight:800;margin-right:auto}
+nav{display:flex;gap:6px}
+nav button{background:none;border:0;color:#B9CFC8;padding:8px 14px;border-radius:8px;font-weight:600}
+nav button.on{background:var(--gold);color:var(--ink)}
+#clock{font-size:.9rem;color:#B9CFC8}
+main{flex:1;padding:16px 20px}
+.view{display:none}.view.on{display:block}
+
+/* ===== 2. HALAMAN KASIR ===== */
+.pos{display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.bar input{flex:1;min-width:160px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.chip{padding:8px 14px;border:1px solid var(--line);background:var(--panel);border-radius:999px;font-weight:600}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:4px}
+.item:hover{border-color:var(--chili)}
+.item:active{transform:scale(.97)}
+.item .em{font-size:2rem}
+.item b{font-weight:600}
+.item span{color:var(--chili);font-weight:800}
+.cart{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;position:sticky;top:12px}
+.cart h2{font-size:1.1rem;margin-bottom:10px}
+.meta{display:flex;gap:8px;margin-bottom:10px}
+.meta input,.meta select{flex:1;min-width:0;padding:8px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.lines{max-height:280px;overflow:auto;border-top:1px solid var(--line)}
+.line{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:10px 0;border-bottom:1px solid var(--line)}
+.line small{color:var(--muted)}
+.qty{display:flex;align-items:center;gap:8px;grid-row:span 2}
+.qty button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--paper);font-weight:800}
+.empty{color:var(--muted);padding:24px 0;text-align:center}
+.sum{margin:12px 0;display:grid;gap:6px}
+.sum div{display:flex;justify-content:space-between}
+.sum .tot{font-size:1.35rem;font-weight:800;border-top:2px solid var(--ink);padding-top:8px;margin-top:4px}
+.sum input{width:70px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;text-align:right}
+.btn{padding:12px 16px;border-radius:10px;border:0;font-weight:800;background:var(--chili);color:#fff}
+.btn.alt{background:var(--paper);color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:8px}.row .btn{flex:1}
+
+/* ===== 3. RIWAYAT & MENU ===== */
+.cards{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;min-width:200px}
+.card small{color:var(--muted)}.card b{display:block;font-size:1.5rem}
+.tbl{width:100%;border-collapse:collapse;background:var(--panel);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+.tbl th{background:var(--paper);font-weight:600}
+.wrap{overflow-x:auto}
+.form{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.form input,.form select{padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.mini{padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:var(--paper)}
+
+/* ===== 4. MODAL & STRUK ===== */
+.modal{position:fixed;inset:0;background:rgba(20,48,42,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:9}
+.modal.on{display:flex}
+.box{background:#fff;border-radius:14px;padding:22px;width:100%;max-width:400px;max-height:92vh;overflow:auto}
+.box h3{margin-bottom:12px}
+.box label{display:block;margin:10px 0 4px;color:var(--muted);font-size:.9rem}
+.box input,.box select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px}
+.quick{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.change{margin:12px 0;font-size:1.2rem;font-weight:800;color:var(--ok)}
+.rc{font-family:ui-monospace,Menlo,monospace;font-size:.85rem}
+.rc .c{text-align:center}
+.rc hr{border:0;border-top:1px dashed #999;margin:8px 0}
+.rc .r{display:flex;justify-content:space-between;gap:8px}
+
+@media(max-width:900px){.pos{grid-template-columns:1fr}.cart{position:static}}
+@media print{
+  header,main,#payModal,.no-print{display:none!important}
+  #rcModal{position:static;background:none;display:block}
+  .box{max-width:none;padding:0}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 5. KERANGKA HALAMAN ===== -->
+<header>
+  <h1>Warung Nusantara</h1>
+  <nav>
+    <button data-v="pos" class="on">Kasir</button>
+    <button data-v="history">Riwayat</button>
+    <button data-v="menu">Kelola Menu</button>
+  </nav>
+  <span id="clock"></span>
+</header>
+
+<main>
+  <section id="v-pos" class="view on">
+    <div class="pos">
+      <div>
+        <div class="bar">
+          <input id="search" type="search" placeholder="Cari menu…">
+          <div id="cats" class="bar" style="margin:0"></div>
+        </div>
+        <div id="menuGrid" class="grid"></div>
+      </div>
+      <aside class="cart">
+        <h2>Pesanan</h2>
+        <div class="meta">
+          <input id="table" placeholder="No. meja">
+          <select id="type"><option>Makan di tempat</option><option>Bawa pulang</option></select>
+        </div>
+        <div id="lines" class="lines"></div>
+        <div class="sum">
+          <div><span>Subtotal</span><span id="sSub"></span></div>
+          <div><span>Diskon (%) <input id="disc" type="number" min="0" max="100" value="0"></span><span id="sDisc"></span></div>
+          <div><span>Pajak restoran 10%</span><span id="sTax"></span></div>
+          <div class="tot"><span>Total</span><span id="sTot"></span></div>
+        </div>
+        <div class="row">
+          <button class="btn alt" id="clear">Kosongkan</button>
+          <button class="btn" id="pay">Bayar</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="v-history" class="view">
+    <div class="cards">
+      <div class="card"><small>Penjualan hari ini</small><b id="hToday">Rp0</b></div>
+      <div class="card"><small>Transaksi hari ini</small><b id="hCount">0</b></div>
+      <div class="card"><small>Total semua riwayat</small><b id="hAll">Rp0</b></div>
+    </div>
+    <div class="form"><button class="btn alt" id="wipe">Hapus semua riwayat</button></div>
+    <div class="wrap"><table class="tbl">
+      <thead><tr><th>No. nota</th><th>Waktu</th><th>Meja</th><th>Metode</th><th>Total</th><th></th></tr></thead>
+      <tbody id="hBody"></tbody>
+    </table></div>
+  </section>
+
+  <section id="v-menu" class="view">
+    <div class="form">
+      <input id="mEmoji" placeholder="Emoji" style="width:80px" maxlength="2">
+      <input id="mName" placeholder="Nama menu">
+      <input id="mPrice" type="number" min="0" placeholder="Harga">
+      <input id="mCat" list="catList" placeholder="Kategori">
+      <datalist id="catList"></datalist>
+      <button class="btn" id="mAdd">Tambah menu</button>
+    </div>
+    <div class="wrap"><table class="tbl">
+      <thead><tr><th></th><th>Nama</th><th>Kategori</th><th>Harga</th><th></th></tr></thead>
+      <tbody id="mBody"></tbody>
+    </table></div>
+  </section>
+</main>
+
+<!-- ===== 6. MODAL PEMBAYARAN & STRUK ===== -->
+<div class="modal" id="payModal"><div class="box">
+  <h3>Pembayaran</h3>
+  <div>Total tagihan</div><div style="font-size:1.6rem;font-weight:800" id="pTotal"></div>
+  <label for="method">Metode</label>
+  <select id="method"><option>Tunai</option><option>QRIS</option><option>Kartu</option></select>
+  <div id="cashBox">
+    <label for="cash">Uang diterima</label>
+    <input id="cash" type="number" min="0">
+    <div class="quick" id="quick"></div>
+    <div class="change" id="change"></div>
+  </div>
+  <div class="row" style="margin-top:14px">
+    <button class="btn alt" id="pCancel">Batal</button>
+    <button class="btn" id="pOk">Konfirmasi</button>
+  </div>
+</div></div>
+
+<div class="modal" id="rcModal"><div class="box">
+  <div id="receipt" class="rc"></div>
+  <div class="row no-print" style="margin-top:14px">
+    <button class="btn alt" id="rcClose">Tutup</button>
+    <button class="btn" id="rcPrint">Cetak struk</button>
+  </div>
+</div></div>
+
+<script>
+/* ===== 7. DATA & PENYIMPANAN (localStorage) ===== */
+const TAX = 0.10;                       // ubah bila pajak berbeda
+const $ = s => document.querySelector(s);
+const rp = n => 'Rp' + Math.round(n).toLocaleString('id-ID');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } };
+const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+
+const DEFAULT_MENU = [
+  {id:1,e:'🍛',n:'Nasi Goreng Spesial',p:28000,c:'Makanan'},
+  {id:2,e:'🍜',n:'Mie Ayam Bakso',p:24000,c:'Makanan'},
+  {id:3,e:'🍗',n:'Ayam Bakar Madu',p:32000,c:'Makanan'},
+  {id:4,e:'🥗',n:'Gado-gado',p:22000,c:'Makanan'},
+  {id:5,e:'🍢',n:'Sate Ayam (10 tusuk)',p:30000,c:'Makanan'},
+  {id:6,e:'🍟',n:'Kentang Goreng',p:16000,c:'Camilan'},
+  {id:7,e:'🍌',n:'Pisang Goreng',p:14000,c:'Camilan'},
+  {id:8,e:'🍵',n:'Es Teh Manis',p:6000,c:'Minuman'},
+  {id:9,e:'🍊',n:'Es Jeruk',p:10000,c:'Minuman'},
+  {id:10,e:'☕',n:'Kopi Susu',p:15000,c:'Minuman'},
+  {id:11,e:'🥥',n:'Es Kelapa Muda',p:14000,c:'Minuman'},
+  {id:12,e:'🍨',n:'Es Campur',p:18000,c:'Dessert'}
+];
+let menu = load('kasir_menu', DEFAULT_MENU);
+let orders = load('kasir_orders', []);
+let cart = {};              // { idMenu: jumlah }
+let cat = 'Semua', query = '';
+
+/* ===== 8. NAVIGASI & JAM ===== */
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === 'v-' + b.dataset.v));
+  if (b.dataset.v === 'history') renderHistory();
+  if (b.dataset.v === 'menu') renderMenuAdmin();
+});
+const tick = () => $('#clock').textContent = new Date().toLocaleString('id-ID', {dateStyle:'medium', timeStyle:'short'});
+tick(); setInterval(tick, 30000);
+
+/* ===== 9. KASIR: MENU & KERANJANG ===== */
+function renderCats() {
+  const cats = ['Semua', ...new Set(menu.map(m => m.c))];
+  $('#cats').innerHTML = cats.map(c => `<button class="chip ${c === cat ? 'on' : ''}" data-c="${esc(c)}">${esc(c)}</button>`).join('');
+  $('#cats').querySelectorAll('button').forEach(b => b.onclick = () => { cat = b.dataset.c; renderCats(); renderMenu(); });
+  $('#catList').innerHTML = cats.slice(1).map(c => `<option value="${esc(c)}">`).join('');
+}
+function renderMenu() {
+  const list = menu.filter(m => (cat === 'Semua' || m.c === cat) && m.n.toLowerCase().includes(query));
+  $('#menuGrid').innerHTML = list.length
+    ? list.map(m => `<button class="item" data-id="${m.id}"><span class="em">${esc(m.e)}</span><b>${esc(m.n)}</b><span>${rp(m.p)}</span></button>`).join('')
+    : '<p class="empty">Menu tidak ditemukan.</p>';
+  $('#menuGrid').querySelectorAll('.item').forEach(b => b.onclick = () => change(+b.dataset.id, 1));
+}
+$('#search').oninput = e => { query = e.target.value.toLowerCase(); renderMenu(); };
+
+function change(id, d) {
+  cart[id] = (cart[id] || 0) + d;
+  if (cart[id] <= 0) delete cart[id];
+  renderCart();
+}
+function totals() {
+  const sub = Object.entries(cart).reduce((s, [id, q]) => s + (menu.find(m => m.id == id)?.p || 0) * q, 0);
+  const pct = Math.min(100, Math.max(0, +$('#disc').value || 0));
+  const disc = sub * pct / 100;
+  const tax = (sub - disc) * TAX;
+  return {sub, disc, tax, total: sub - disc + tax};
+}
+function renderCart() {
+  const ids = Object.keys(cart);
+  $('#lines').innerHTML = ids.length ? ids.map(id => {
+    const m = menu.find(x => x.id == id); if (!m) return '';
+    return `<div class="line"><b>${esc(m.n)}</b>
+      <div class="qty"><button data-id="${id}" data-d="-1">−</button><span>${cart[id]}</span><button data-id="${id}" data-d="1">+</button></div>
+      <small>${rp(m.p)} × ${cart[id]} = ${rp(m.p * cart[id])}</small></div>`;
+  }).join('') : '<p class="empty">Belum ada pesanan.<br>Ketuk menu untuk menambah.</p>';
+  $('#lines').querySelectorAll('.qty button').forEach(b => b.onclick = () => change(+b.dataset.id, +b.dataset.d));
+  const t = totals();
+  $('#sSub').textContent = rp(t.sub);
+  $('#sDisc').textContent = '−' + rp(t.disc);
+  $('#sTax').textContent = rp(t.tax);
+  $('#sTot').textContent = rp(t.total);
+  $('#pay').disabled = !ids.length;
+}
+$('#disc').oninput = renderCart;
+$('#clear').onclick = () => { cart = {}; renderCart(); };
+
+/* ===== 10. PEMBAYARAN ===== */
+let due = 0;
+$('#pay').onclick = () => {
+  due = Math.round(totals().total);
+  $('#pTotal').textContent = rp(due);
+  $('#method').value = 'Tunai';
+  $('#cash').value = '';
+  const opts = [due, 50000, 100000].filter((v, i, a) => a.indexOf(v) === i);
+  $('#quick').innerHTML = opts.map(v => `<button class="mini" data-v="${v}">${v === due ? 'Uang pas' : rp(v)}</button>`).join('');
+  $('#quick').querySelectorAll('button').forEach(b => b.onclick = () => { $('#cash').value = b.dataset.v; payCheck(); });
+  payCheck();
+  $('#payModal').classList.add('on');
+};
+function payCheck() {
+  const cash = $('#method').value === 'Tunai';
+  $('#cashBox').style.display = cash ? 'block' : 'none';
+  const back = (+$('#cash').value || 0) - due;
+  $('#change').textContent = back >= 0 ? 'Kembalian: ' + rp(back) : 'Kurang: ' + rp(-back);
+  $('#change').style.color = back >= 0 ? 'var(--ok)' : 'var(--chili)';
+  $('#pOk').disabled = cash && back < 0;
+}
+$('#cash').oninput = payCheck;
+$('#method').onchange = payCheck;
+$('#pCancel').onclick = () => $('#payModal').classList.remove('on');
+
+$('#pOk').onclick = () => {
+  const t = totals(), cash = $('#method').value === 'Tunai';
+  const received = cash ? +$('#cash').value : due;
+  const seq = (orders[0]?.seq || 0) + 1;
+  const d = new Date();
+  const order = {
+    seq, no: 'INV-' + d.toISOString().slice(0, 10).replace(/-/g, '') + '-' + String(seq).padStart(3, '0'),
+    time: d.toISOString(), table: $('#table').value || '-', type: $('#type').value,
+    items: Object.entries(cart).map(([id, q]) => { const m = menu.find(x => x.id == id); return {n: m.n, p: m.p, q}; }),
+    sub: t.sub, disc: t.disc, tax: t.tax, total: due, method: $('#method').value,
+    cash: received, change: received - due
+  };
+  orders.unshift(order); save('kasir_orders', orders);
+  cart = {}; $('#table').value = ''; $('#disc').value = 0; renderCart();
+  $('#payModal').classList.remove('on');
+  showReceipt(order);
+};
+
+/* ===== 11. STRUK ===== */
+function showReceipt(o) {
+  $('#receipt').innerHTML = `
+    <div class="c"><b>WARUNG NUSANTARA</b><br>Terima kasih sudah makan di sini</div><hr>
+    <div>${esc(o.no)}<br>${new Date(o.time).toLocaleString('id-ID')}<br>Meja ${esc(o.table)} · ${esc(o.type)}</div><hr>
+    ${o.items.map(i => `<div>${esc(i.n)}</div><div class="r"><span>${i.q} × ${rp(i.p)}</span><span>${rp(i.q * i.p)}</span></div>`).join('')}<hr>
+    <div class="r"><span>Subtotal</span><span>${rp(o.sub)}</span></div>
+    <div class="r"><span>Diskon</span><span>−${rp(o.disc)}</span></div>
+    <div class="r"><span>Pajak 10%</span><span>${rp(o.tax)}</span></div>
+    <div class="r"><b>TOTAL</b><b>${rp(o.total)}</b></div><hr>
+    <div class="r"><span>${esc(o.method)}</span><span>${rp(o.cash)}</span></div>
+    <div class="r"><span>Kembali</span><span>${rp(o.change)}</span></div>`;
+  $('#rcModal').classList.add('on');
+}
+$('#rcClose').onclick = () => $('#rcModal').classList.remove('on');
+$('#rcPrint').onclick = () => window.print();
+
+/* ===== 12. RIWAYAT ===== */
+function renderHistory() {
+  const today = new Date().toDateString();
+  const td = orders.filter(o => new Date(o.time).toDateString() === today);
+  $('#hToday').textContent = rp(td.reduce((s, o) => s + o.total, 0));
+  $('#hCount').textContent = td.length;
+  $('#hAll').textContent = rp(orders.reduce((s, o) => s + o.total, 0));
+  $('#hBody').innerHTML = orders.length ? orders.map((o, i) => `<tr>
+    <td>${esc(o.no)}</td><td>${new Date(o.time).toLocaleString('id-ID', {dateStyle:'short', timeStyle:'short'})}</td>
+    <td>${esc(o.table)}</td><td>${esc(o.method)}</td><td>${rp(o.total)}</td>
+    <td><button class="mini" data-i="${i}">Lihat struk</button></td></tr>`).join('')
+    : '<tr><td colspan="6" class="empty">Belum ada transaksi.</td></tr>';
+  $('#hBody').querySelectorAll('button').forEach(b => b.onclick = () => showReceipt(orders[+b.dataset.i]));
+}
+$('#wipe').onclick = () => {
+  if (orders.length && confirm('Hapus seluruh riwayat transaksi? Tindakan ini tidak bisa dibatalkan.')) {
+    orders = []; save('kasir_orders', orders); renderHistory();
+  }
+};
+
+/* ===== 13. KELOLA MENU ===== */
+function renderMenuAdmin() {
+  $('#mBody').innerHTML = menu.map(m => `<tr>
+    <td>${esc(m.e)}</td><td>${esc(m.n)}</td><td>${esc(m.c)}</td><td>${rp(m.p)}</td>
+    <td><button class="mini" data-a="price" data-id="${m.id}">Ubah harga</button>
+        <button class="mini" data-a="del" data-id="${m.id}">Hapus</button></td></tr>`).join('');
+  $('#mBody').querySelectorAll('button').forEach(b => b.onclick = () => {
+    const m = menu.find(x => x.id == b.dataset.id);
+    if (b.dataset.a === 'del') { menu = menu.filter(x => x !== m); delete cart[m.id]; }
+    else { const p = +prompt('Harga baru untuk ' + m.n, m.p); if (p > 0) m.p = p; }
+    save('kasir_menu', menu); renderMenuAdmin(); renderCats(); renderMenu(); renderCart();
+  });
+}
+$('#mAdd').onclick = () => {
+  const n = $('#mName').value.trim(), p = +$('#mPrice').value, c = $('#mCat').value.trim() || 'Lainnya';
+  if (!n || !(p > 0)) { alert('Isi nama menu dan harga dengan benar.'); return; }
+  menu.push({id: Date.now(), e: $('#mEmoji').value || '🍽️', n, p, c});
+  save('kasir_menu', menu);
+  ['#mEmoji', '#mName', '#mPrice', '#mCat'].forEach(s => $(s).value = '');
+  renderMenuAdmin(); renderCats(); renderMenu();
+};
+
+/* ===== 14. MULAI ===== */
+renderCats(); renderMenu(); renderCart();
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+.title { font-family: Georgia, "Times New Roman", serif; font-size: 32px; font-weight: 600; margin: 0 0 4px; }
+.sub { margin: 0; color: #64748b; font-size: 14px; }
+
+.btnPrimary { display: inline-flex; align-items: center; gap: 8px; background: #0b1b3a; color: #fff; border: 0; border-radius: 8px; padding: 10px 16px; font-weight: 600; font-size: 13px; cursor: pointer; }
+.btnPrimary:disabled, .btnGhost:disabled, .btnGold:disabled { opacity: 0.6; cursor: not-allowed; }
+.btnGhost { background: #f1f5f9; color: #334155; border: 0; border-radius: 8px; padding: 10px 16px; font-weight: 600; font-size: 13px; cursor: pointer; }
+.btnGold { background: #d4a72c; color: #1f2937; border: 0; border-radius: 8px; padding: 10px 16px; font-weight: 600; font-size: 13px; cursor: pointer; }
+
+.layout { display: grid; grid-template-columns: 1.7fr 1fr; gap: 24px; align-items: start; }
+@media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } }
+
+.listCard, .preview { background: #fff; border: 1px solid #e5e7eb; border-radius: 20px; padding: 28px; }
+.cardHeading { font-family: Georgia, "Times New Roman", serif; font-size: 22px; font-weight: 600; margin: 0 0 20px; }
+.empty { color: #64748b; padding: 12px 0; }
+
+.item { border: 1px solid #e5e7eb; border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; cursor: pointer; }
+.itemActive { border-color: #d4a72c; }
+.itemTop { display: flex; justify-content: space-between; align-items: center; }
+.badge { padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.bPub { background: #dcfce7; color: #15803d; }
+.bDraft { background: #f1f5f9; color: #64748b; }
+.itemTime { color: #94a3b8; font-size: 11px; }
+.itemTitle { font-size: 15px; font-weight: 600; margin: 12px 0; }
+.itemBottom { display: flex; justify-content: space-between; align-items: center; }
+.count { color: #475569; font-size: 12px; }
+.actions { display: flex; gap: 8px; }
+.btnSmall { border: 0; border-radius: 6px; padding: 6px 14px; font-size: 11px; font-weight: 600; cursor: pointer; }
+.btnEdit { background: #f1f5f9; color: #475569; }
+.btnTarik { background: #fee2e2; color: #dc2626; }
+.btnPublish { background: #d4a72c; color: #1f2937; }
+
+.kicker { color: #c9971c; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; margin: 0 0 14px; }
+.pvTitle { font-family: Georgia, "Times New Roman", serif; font-size: 30px; font-weight: 600; line-height: 1.2; margin: 0 0 14px; }
+.pvMeta { color: #64748b; font-size: 12px; margin: 0 0 18px; padding-bottom: 18px; border-bottom: 1px solid #eef0f3; }
+.pvBody { background: #f8fafc; border-radius: 14px; padding: 20px; }
+.pvText { white-space: pre-wrap; font-size: 14px; line-height: 1.6; color: #334155; margin-bottom: 18px; }
+.btnSk { display: block; text-align: center; text-decoration: none; background: #0b1b3a; color: #fff; border-radius: 8px; padding: 14px; font-weight: 600; font-size: 13px; }
+.pvFoot { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 18px; border-top: 1px solid #eef0f3; color: #64748b; font-size: 12px; }
+.ok { color: #10b981; }
+
+.overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+.modal { background: #fff; border-radius: 16px; padding: 24px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+.modalHead { display: flex; justify-content: space-between; align-items: center; }
+.modalHead h2 { margin: 0; font-size: 20px; }
+.close { background: none; border: 0; cursor: pointer; color: #64748b; }
+.modal label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: #334155; }
+.modal input, .modal textarea { border: 1px solid #d1d5db; border-radius: 8px; padding: 10px 12px; font-size: 14px; font-weight: 400; font-family: inherit; resize: vertical; }
+.error { color: #b91c1c; background: #fee2e2; padding: 8px 12px; border-radius: 8px; font-size: 13px; margin: 0; }
+.formActions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }

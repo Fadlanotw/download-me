@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Masuk kasir</title>
+<style>
+:root{--pine:#12352E;--pine2:#1D4A40;--amber:#E0A21B;--bg:#F5F7F4;--card:#fff;--ink:#14201C;--mute:#5B6B65;--line:#CDD6D1;--err:#B3261E;--ok:#1B6B4A;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1512;--card:#16201C;--ink:#EAF0EC;--mute:#9DB0A8;--line:#2E3F38;--err:#F2857D;--ok:#6CCBA0}}
+:root[data-theme="dark"]{--bg:#0E1512;--card:#16201C;--ink:#EAF0EC;--mute:#9DB0A8;--line:#2E3F38;--err:#F2857D;--ok:#6CCBA0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+.wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);min-height:100dvh}
+.side{background:var(--pine);color:#F3EFE2;padding:40px;display:flex;flex-direction:column;justify-content:space-between;gap:32px}
+.brand{font-size:18px;font-weight:600;letter-spacing:.01em}
+.brand small{display:block;font-weight:400;font-size:13px;opacity:.7}
+.clock{font-size:clamp(56px,9vw,112px);font-weight:300;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.date{margin-top:12px;font-size:16px;opacity:.8}
+.shift{display:inline-block;margin-top:20px;padding:6px 14px;border-radius:999px;background:var(--amber);color:#2B1E00;font-weight:600;font-size:14px}
+.main{display:flex;align-items:center;justify-content:center;padding:40px 24px}
+.card{width:100%;max-width:400px}
+h1{font-size:26px;font-weight:600;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 24px;font-size:15px}
+fieldset{border:0;padding:0;margin:0 0 18px}
+legend,label{font-size:14px;font-weight:500;padding:0}
+label{display:block;margin-bottom:6px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:block;text-align:center;padding:10px 6px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer;font-size:15px}
+.seg input:checked+span{background:var(--pine);border-color:var(--pine);color:#fff}
+.seg input:focus-visible+span{outline:3px solid var(--amber);outline-offset:2px}
+.field{margin-bottom:18px}
+input[type=text],input[type=password],input[inputmode=numeric]{width:100%;padding:12px 14px;font-size:16px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+input:focus-visible,button:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.pw{position:relative}
+.pw input{padding-right:96px}
+.tog{position:absolute;right:6px;top:6px;bottom:6px;padding:0 10px;border:0;background:none;color:var(--mute);font-size:14px;cursor:pointer;border-radius:6px}
+.rp{position:relative}
+.rp b{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-weight:500;color:var(--mute)}
+.rp input{padding-left:44px;font-variant-numeric:tabular-nums}
+.hint{font-size:13px;color:var(--mute);margin-top:6px}
+.err{color:var(--err);font-size:14px;min-height:22px;margin:0 0 12px}
+.btn{width:100%;padding:14px;font-size:16px;font-weight:600;border:0;border-radius:8px;background:var(--pine);color:#fff;cursor:pointer}
+.btn:hover{background:var(--pine2)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line);margin-top:10px}
+.demo{margin-top:20px;font-size:13px;color:var(--mute)}
+.done dl{margin:20px 0;display:grid;grid-template-columns:auto 1fr;gap:10px 20px;font-size:15px}
+.done dt{color:var(--mute)}.done dd{margin:0;font-weight:500;text-align:right;font-variant-numeric:tabular-nums}
+.ok{color:var(--ok);font-weight:600}
+[hidden]{display:none!important}
+@media (max-width:760px){.wrap{grid-template-columns:1fr}.side{padding:28px 24px;gap:16px}.clock{font-size:64px}.main{padding:28px 20px 40px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<aside class="side">
+<div class="brand">Warung Nusantara<small>Kasir &amp; pemesanan</small></div>
+<div><div class="clock" id="clock">00:00</div><div class="date" id="date"></div><span class="shift" id="shift">Shift</span></div>
+</aside>
+<main class="main"><div class="card">
+<form id="form" novalidate>
+<h1>Masuk kasir</h1>
+<p class="sub">Pilih peran, lalu masuk untuk membuka shift.</p>
+<fieldset><legend>Peran</legend>
+<div class="seg">
+<label><input type="radio" name="role" value="kasir" checked><span>Kasir</span></label>
+<label><input type="radio" name="role" value="admin"><span>Admin</span></label>
+<label><input type="radio" name="role" value="pemilik"><span>Pemilik</span></label>
+</div></fieldset>
+<div class="field"><label for="u">Nama pengguna</label><input type="text" id="u" autocomplete="username" autocapitalize="none" spellcheck="false"></div>
+<div class="field"><label for="p">Kata sandi</label><div class="pw"><input type="password" id="p" autocomplete="current-password"><button type="button" class="tog" id="tog">Tampilkan</button></div></div>
+<div class="field" id="cashf"><label for="c">Modal awal kas</label><div class="rp"><b>Rp</b><input type="text" inputmode="numeric" id="c" placeholder="0"></div><div class="hint">Hitung uang di laci sebelum shift dimulai.</div></div>
+<p class="err" id="err" role="alert"></p>
+<button class="btn" id="go" type="submit">Masuk</button>
+</form>
+<div class="done" id="done" hidden>
+<h1><span class="ok">Shift dibuka</span></h1>
+<p class="sub" id="hello"></p>
+<dl id="sum"></dl>
+<button class="btn" id="next" type="button">Lanjut ke denah meja</button>
+<button class="btn ghost" id="out" type="button">Ganti akun</button>
+</div>
+</div></main>
+</div>
+<script>
+var LBL={kasir:"Kasir",admin:"Admin",pemilik:"Pemilik"};
+var $=function(i){return document.getElementById(i)};
+function hm(d){return d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}).replace(".",":")}
+function tick(){var d=new Date(),h=d.getHours();
+$("clock").textContent=hm(d);
+$("date").textContent=d.toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+$("shift").textContent="Shift "+(h<11?"pagi":h<17?"siang":"malam")}
+tick();setInterval(tick,1000);
+function role(){return document.querySelector('input[name=role]:checked').value}
+function syncCash(){$("cashf").hidden=role()!=="kasir"}
+document.querySelectorAll("input[name=role]").forEach(function(r){r.addEventListener("change",syncCash)});
+$("tog").onclick=function(){var s=$("p").type==="password";$("p").type=s?"text":"password";$("tog").textContent=s?"Sembunyikan":"Tampilkan"};
+$("c").addEventListener("input",function(){var v=this.value.replace(/\D/g,"").replace(/^0+(?=\d)/,"");this.value=v.replace(/\B(?=(\d{3})+(?!\d))/g,".")});
+function show(d){
+$("hello").textContent="Selamat bekerja, "+d.name+".";
+var rows=[["Peran",LBL[d.role]],["Jam masuk",hm(new Date())],["Shift",$("shift").textContent.replace("Shift ","")]];
+if(d.shift)rows.push(["Modal awal kas","Rp "+d.shift.openingCash.toLocaleString("id-ID")]);
+$("sum").innerHTML=rows.map(function(x){return "<dt>"+x[0]+"</dt><dd>"+x[1]+"</dd>"}).join("");
+$("form").hidden=true;$("done").hidden=false;$("p").value="";$("next").focus()}
+$("form").addEventListener("submit",async function(e){e.preventDefault();
+var err=$("err");err.textContent="";
+var u=$("u").value.trim(),p=$("p").value,r=role();
+if(!u){err.textContent="Isi nama pengguna.";$("u").focus();return}
+if(!p){err.textContent="Isi kata sandi.";$("p").focus();return}
+var cash=parseInt($("c").value.replace(/\./g,""),10);
+if(r==="kasir"&&isNaN(cash)){err.textContent="Isi modal awal kas, tulis 0 jika laci kosong.";$("c").focus();return}
+$("go").disabled=true;
+try{
+var res=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:u,password:p,role:r,openingCash:cash})});
+var d=await res.json();
+if(!res.ok){err.textContent=d.error||"Gagal masuk.";return}
+show(d)}catch(x){err.textContent="Server tidak bisa dihubungi. Periksa koneksi."}
+finally{$("go").disabled=false}});
+$("next").onclick=function(){location.href="/app.html"};
+$("out").onclick=function(){fetch("/api/logout",{method:"POST"}).finally(function(){$("done").hidden=true;$("form").hidden=false;$("u").value="";$("c").value="";$("u").focus()})};
+syncCash();
+</script>
+</body>
+</html>

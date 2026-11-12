@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kasir</title>
+<style>body{margin:0;font-family:system-ui,sans-serif;background:#F5F7F4;color:#14201C;display:grid;place-items:center;min-height:100dvh;padding:24px}
+.c{max-width:420px;width:100%}h1{font-size:24px;margin:0 0 8px}p{color:#5B6B65}
+button{padding:12px 18px;font-size:16px;border:1px solid #CDD6D1;border-radius:8px;background:#fff;cursor:pointer}
+@media(prefers-color-scheme:dark){body{background:#0E1512;color:#EAF0EC}p{color:#9DB0A8}button{background:#16201C;color:#EAF0EC;border-color:#2E3F38}}</style></head>
+<body><div class="c"><h1 id="h">Memuat...</h1><p id="p"></p><p>Denah meja dibuat di langkah berikutnya.</p><button id="out">Keluar</button></div>
+<script>
+fetch("/api/me").then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){
+document.getElementById("h").textContent="Halo, "+d.name;
+document.getElementById("p").textContent="Peran: "+d.role+(d.shift?" | Modal awal kas: Rp "+d.shift.openingCash.toLocaleString("id-ID"):"")}).catch(function(){location.href="/"});
+document.getElementById("out").onclick=function(){fetch("/api/logout",{method:"POST"}).then(function(){location.href="/"})};
+</script></body></html>

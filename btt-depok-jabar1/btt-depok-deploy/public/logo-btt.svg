@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 210" role="img" aria-label="Logo Layanan BTT Kota Depok">
+  <path d="M100 8 L180 36 V98 C180 148 146 184 100 200 C54 184 20 148 20 98 V36 Z" fill="#0b3d91" stroke="#f2b705" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M100 44 L154 92 H46 Z" fill="#f2b705"/>
+  <rect x="62" y="92" width="76" height="44" fill="#ffffff"/>
+  <rect x="90" y="108" width="20" height="28" rx="2" fill="#0b3d91"/>
+  <rect x="68" y="102" width="16" height="14" rx="2" fill="#9db6e6"/>
+  <rect x="116" y="102" width="16" height="14" rx="2" fill="#9db6e6"/>
+  <text x="100" y="175" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="30" letter-spacing="3" fill="#ffffff">BTT</text>
+</svg>

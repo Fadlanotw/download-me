@@ -1,0 +1,20 @@
+[
+  {
+    "username": "kasir",
+    "name": "Sari",
+    "role": "kasir",
+    "hash": "e17dcb928595fce5e874989d8a1143cb:473161685dc54b4e0ff3a2222341a2e887a903b804ae8ceedba60768e0deb00d39261b40f75a9254f6b344b548daaf15f0f7fc393fe7cc2e918b379d547dfe1f"
+  },
+  {
+    "username": "admin",
+    "name": "Budi",
+    "role": "admin",
+    "hash": "548eb2803046e033e4ce0cd3239564bf:0595641b00abfee41b41f471fe74305685fd82d61417337c9cf46e250a439641bf77087325e02d02a3053ce8a834f854ab6298a1d37b2d4705e9ab886cd9b160"
+  },
+  {
+    "username": "pemilik",
+    "name": "Ibu Ratna",
+    "role": "pemilik",
+    "hash": "b47d920150da30159eb708959cfe7f6c:261f6cecc5dff93251001f5b00f423f5003c93dc3bf0fcc2c1ca7d15c4a532455b4bd912d5a008c2286ad9a3c5387304c125a8e19e5af59cd55fb20158f71d4b"
+  }
+]

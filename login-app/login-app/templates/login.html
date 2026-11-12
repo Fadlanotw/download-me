@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Masuk — Akar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="screen">
+    <!-- Panel kiri: identitas -->
+    <aside class="brand-pane">
+      <div class="mark">Akar</div>
+      <div class="pitch">
+        <h1>Tempat yang tenang untuk menyimpan pikiranmu.</h1>
+        <p>Catat, susun, dan tumbuhkan idemu dari satu akar yang sama. Masuk untuk melanjutkan dari tempat kamu berhenti.</p>
+      </div>
+      <div class="footnote">Data tersimpan aman di perangkat lokal.</div>
+
+      <svg class="root-motif" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M200 40 C205 120 195 160 200 210" stroke="#eaefe8" stroke-opacity="0.18" stroke-width="2"/>
+        <path d="M200 210 C160 230 140 250 110 300" stroke="#eaefe8" stroke-opacity="0.18" stroke-width="2"/>
+        <path d="M200 210 C240 235 255 260 290 305" stroke="#eaefe8" stroke-opacity="0.18" stroke-width="2"/>
+        <path d="M200 210 C185 250 180 280 165 330" stroke="#eaefe8" stroke-opacity="0.14" stroke-width="2"/>
+        <path d="M200 210 C215 245 225 275 235 320" stroke="#eaefe8" stroke-opacity="0.14" stroke-width="2"/>
+        <path d="M110 300 C95 315 85 325 65 345" stroke="#eaefe8" stroke-opacity="0.12" stroke-width="1.6"/>
+        <path d="M290 305 C305 320 315 330 335 350" stroke="#eaefe8" stroke-opacity="0.12" stroke-width="1.6"/>
+        <circle cx="200" cy="40" r="4" fill="#9c6b3f"/>
+      </svg>
+    </aside>
+
+    <!-- Panel kanan: form -->
+    <main class="form-pane">
+      <div class="form-card">
+        <p class="eyebrow-link">Belum punya akun? <a href="{{ url_for('register') }}">Daftar di sini</a></p>
+        <h2>Masuk ke Akar</h2>
+        <p class="sub">Masukkan email dan kata sandimu.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul class="flash-list">
+              {% for category, message in messages %}
+                <li class="flash {{ category }}">{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
+        <form method="post" action="{{ url_for('login') }}" novalidate>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="nama@email.com" required autofocus>
+          </div>
+
+          <div class="field password-field">
+            <label for="password">Kata sandi</label>
+            <input type="password" id="password" name="password" placeholder="Minimal 8 karakter" required minlength="8">
+            <button type="button" class="password-toggle" data-target="password">Lihat</button>
+          </div>
+
+          <div class="row-between">
+            <label class="checkbox-row">
+              <input type="checkbox" name="remember">
+              Ingat saya
+            </label>
+            <a class="link-quiet" href="#">Lupa kata sandi?</a>
+          </div>
+
+          <button type="submit" class="btn-primary">Masuk</button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

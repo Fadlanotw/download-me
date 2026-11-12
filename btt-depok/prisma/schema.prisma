@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int          @id @default(autoincrement())
+  nama       String
+  nik        String       @unique
+  email      String       @unique
+  telp       String?
+  password   String
+  role       String       @default("warga")
+  createdAt  DateTime     @default(now())
+  permohonan Permohonan[]
+}
+
+model Permohonan {
+  id               Int       @id @default(autoincrement())
+  kode             String    @unique
+  userId           Int
+  user             User      @relation(fields: [userId], references: [id])
+  jenisBencana     String
+  tanggalKejadian  DateTime
+  alamat           String
+  kelurahan        String
+  kecamatan        String
+  uraian           String    @db.Text
+  berkas           String    @db.Text
+  status           String    @default("DIAJUKAN")
+  tingkatKerusakan String?
+  nominal          Int?
+  nomorSK          String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  riwayat          Riwayat[]
+}
+
+model Riwayat {
+  id           Int        @id @default(autoincrement())
+  permohonanId Int
+  permohonan   Permohonan @relation(fields: [permohonanId], references: [id], onDelete: Cascade)
+  status       String
+  catatan      String?    @db.Text
+  createdAt    DateTime   @default(now())
+}
